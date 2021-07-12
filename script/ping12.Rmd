@@ -1,0 +1,162 @@
+---
+title: "PING (Pushing Immunogenetics to the Next Generation)- Run PING2 extractor and  gc caller"
+author: "Jieqiong Dai"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+      html_document:
+        code_folding: hide
+        toc: true
+        toc_float: true
+        pandoc_args: [
+         "+RTS", "-k16g",
+         "-RTS"
+         ]   
+params:
+      fastq_dir: ''
+      fastq_pat: ''
+      out_dir: ''
+      shortNameDelim: ''
+
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 38px;
+  color: DarkRed;
+}
+h1 { /* Header 1 */
+  font-size: 20px;
+  color: DarkBlue;
+}
+h2 { /* Header 2 */
+  font-size: 18px;
+  color: DarkBlue;
+}
+h3 { /* Header 3 */
+  font-size: 16px;
+  color: DarkBlue;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Working directory:
+```{r,message=FALSE,warning=FALSE}
+print(getwd())
+```
+# Check required packages
+```{r,message=FALSE,warning=FALSE}
+# function for installing needed packages
+installpkg <- function(x){
+    r = getOption("repos")
+    r["CRAN"] = "http://cran.us.r-project.org"
+    options(repos = r)
+    if(x %in% rownames(installed.packages())==FALSE) {
+        if(x %in% rownames(available.packages())==FALSE) {
+            if (!requireNamespace("BiocManager", quietly = TRUE))
+               install.packages("BiocManager")
+               BiocManager::install(x,ask = FALSE)
+        } else {
+            install.packages(x)
+        }
+        paste(x, "package is installed...")
+    } else {
+        paste(x,"package already installed...")
+    }
+}
+
+# install necessary packages
+required_packages  <- c("data.table","plotly","stringr","pryr","gtools","R.utils","rmarkdown","methods","zip","BiocParallel")
+lapply(required_packages,installpkg)
+
+library(data.table)
+library(stringr)
+library(methods)
+library(pryr)
+library(plotly)
+library(R.utils)
+library(gtools)
+library(zip)
+```
+```{r setup, include=FALSE}
+#paralle
+library(BiocParallel)
+# code from https://hpc.nih.gov/apps/R.html#biocparallel
+detectBatchCPUs <- function() {
+    ncores <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK"))
+    if (is.na(ncores)) {
+        ncores <- as.integer(Sys.getenv("SLURM_JOB_CPUS_PER_NODE"))
+    }
+        if (is.na(ncores)) {
+                return(4) # for helix
+        }
+        return(ncores)
+}
+ncpus <- detectBatchCPUs()
+register(MulticoreParam(ncpus))
+```
+# Set up system and parameters
+```{r,message=FALSE,warning=FALSE}
+rawFastqDirectory <- params$fastq_dir
+fastqPattern <- params$fastq_pat
+resultsDirectory <- params$out_dir
+shortNameDelim <- params$shortNameDelim
+
+source('Resources/general_functions.R')
+source('Resources/extractor_functions.R') 
+source('Resources/ping_copy.R') 
+source('Resources/ping_allele.R') 
+source('Resources/ping_gc_align.R') 
+source('Resources/alleleCombine_functions.R') 
+
+outDir <- pathObj(name='output_directory',path=resultsDirectory)
+outDir$dirGen()
+
+threads <- ncpus
+setDTthreads(threads)
+
+setup.minDP <- 8
+final.minDP <- 20
+setup.hetRatio <- 0.25
+final.hetRatio <- 0.25
+copy.readBoost <- T
+setup.readBoost <- T
+final.readBoost <- F
+readBoost.thresh <- 2
+allele.fullAlign <- F
+copy.fullAlign <- F
+```
+
+# Run PING2 extractor
+```{r,message=FALSE,warning=FALSE}
+sampleList <- general.paired_sample_objects(rawFastqDirectory, fastqPattern, outDir$path, shortNameDelim)
+extractedFastqDirectory <- file.path(resultsDirectory,'extractedFastq') 
+outDir.extFqDir <-pathObj(name='extractedFqDir',path=extractedFastqDirectory)
+outDir.extFqDir$dirGen()
+sampleList <- extractor.run(sampleList,threads,outDir.extFqDir$path,forceRun=F) # set forceRun=T if you want to force alignments
+```
+
+# Run PING2 gene content and copy number (gc_caller)
+```{r,message=FALSE,warning=FALSE}
+source('Resources/genotype_alignment_functions.R')
+source('Resources/alleleSetup_functions.R')
+sampleList <- ping_copy.graph(sampleList=sampleList,threads=threads,resultsDirectory=outDir$path,forceRun=F,onlyKFF=F,fullAlign = F) 
+
+store <- paste0(resultsDirectory,"/ping12.Rdata")
+save.image(store)
+```

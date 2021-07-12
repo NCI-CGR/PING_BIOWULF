@@ -1,0 +1,22 @@
+#!/bin/bash
+mkdir -p log
+
+module load snakemake R/4.0.3 bowtie samtools bcftools || exit 1
+
+snakemake --cores=1 --unlock
+
+sbcmd="sbatch --cpus-per-task={cluster.cpus} \
+              --output=log/snakejob_%j.out \
+              --time={cluster.time} \
+              --gres={cluster.scratch} \ 
+              --mem={cluster.mem} \
+              --partition={cluster.partition}"
+ 
+snakemake -pr \ 
+          --cluster-config config/cluster_config.yaml \ 
+          --cluster "$sbcmd" \ 
+          --keep-going \
+          --rerun-incomplete \
+          --jobs 300 \
+          --latency-wait 120 all
+
