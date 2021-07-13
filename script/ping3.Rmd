@@ -11,8 +11,6 @@ output:
          "+RTS", "-k16g",
          "-RTS"
          ]   
-params:
-      data: ''
 
 ---
 
@@ -49,9 +47,6 @@ pre { /* Code block - determines code spacing between lines */
 </style>
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 # Working directory:
 ```{r,message=FALSE,warning=FALSE}
 print(getwd())
@@ -91,6 +86,7 @@ library(gtools)
 library(zip)
 ```
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 #paralle
 library(BiocParallel)
 # code from https://hpc.nih.gov/apps/R.html#biocparallel
@@ -109,7 +105,7 @@ register(MulticoreParam(ncpus))
 ```
 # Set up system and parameters
 ```{r,message=FALSE,warning=FALSE}
-load(params$data)
+load("ping12.Rdata")
 source('Resources/general_functions.R')
 source('Resources/extractor_functions.R') 
 source('Resources/ping_copy.R') 

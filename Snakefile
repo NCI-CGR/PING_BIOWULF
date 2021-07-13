@@ -44,5 +44,6 @@ rule ping_3:
     shell:
           """
           export TMPDIR=/lscratch/$SLURM_JOB_ID
-          Rscript -e 'rmarkdown::render("script/ping3.Rmd",params=list(data="{input[1]}"),output_file="{output}")' 2>log/ping3.err 
+          ln -s -f {input[1]} script/
+          Rscript -e 'rmarkdown::render("script/ping3.Rmd",output_file="{output}")' 2>log/ping3.err 
           """ 

@@ -52,9 +52,6 @@ pre { /* Code block - determines code spacing between lines */
 </style>
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 # Working directory:
 ```{r,message=FALSE,warning=FALSE}
 print(getwd())
@@ -94,6 +91,7 @@ library(gtools)
 library(zip)
 ```
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 #paralle
 library(BiocParallel)
 # code from https://hpc.nih.gov/apps/R.html#biocparallel
