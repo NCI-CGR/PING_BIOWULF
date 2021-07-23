@@ -11,6 +11,8 @@ ping = config["ping"]
 raw = config["raw"]
 fastq_pat = config["fastq_pat"]
 out_dir = config["out_dir"]
+shortNameDelim = config.get("shortNameDelim","")
+filter_sample = config.get("filter","")
 
 if config["step3"]=="yes":
    rule all:
@@ -32,7 +34,7 @@ rule ping_12:
           """
           export TMPDIR=/lscratch/$SLURM_JOB_ID
           ln -s -f {ping} script/
-          Rscript -e 'rmarkdown::render("script/ping12.Rmd",params=list(fastq_dir="{raw}",fastq_pat="{fastq_pat}",out_dir="{out_dir}"),output_file="{output}")' 2>log/ping12.err
+          Rscript -e 'rmarkdown::render("script/ping12.Rmd",params=list(fastq_dir="{raw}",fastq_pat="{fastq_pat}",out_dir="{out_dir}",shortNameDelim="{shortNameDelim}"),output_file="{output[1]}")' 2>log/ping12.err
           """
 
 rule ping_3:
@@ -44,6 +46,5 @@ rule ping_3:
     shell:
           """
           export TMPDIR=/lscratch/$SLURM_JOB_ID
-          ln -s -f {input[1]} script/
-          Rscript -e 'rmarkdown::render("script/ping3.Rmd",output_file="{output}")' 2>log/ping3.err 
+          Rscript -e 'rmarkdown::render("script/ping3.Rmd",params=list(data="{input[1]}",filter="{filter_sample}"),output_file="{output}")' 2>log/ping3.err 
           """ 
