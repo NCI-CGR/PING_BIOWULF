@@ -11,6 +11,9 @@ output:
          "+RTS", "-k16g",
          "-RTS"
          ]   
+params:
+      data: ''
+      filter: ''
 
 ---
 
@@ -46,6 +49,12 @@ pre { /* Code block - determines code spacing between lines */
 }
 </style>
 
+```{r}
+bindingIsLocked("params", env = .GlobalEnv)
+unlockBinding("params", env = .GlobalEnv)
+data <- params$data
+filter <- params$filter
+```
 
 # Working directory:
 ```{r,message=FALSE,warning=FALSE}
@@ -73,7 +82,7 @@ installpkg <- function(x){
 }
 
 # install necessary packages
-required_packages  <- c("data.table","plotly","stringr","pryr","gtools","R.utils","rmarkdown","methods","zip","BiocParallel")
+required_packages  <- c("data.table","plotly","stringr","pryr","gtools","R.utils","rmarkdown","methods","zip","BiocParallel","yaml")
 lapply(required_packages,installpkg)
 
 library(data.table)
@@ -84,8 +93,9 @@ library(plotly)
 library(R.utils)
 library(gtools)
 library(zip)
+library(yaml)
 ```
-```{r setup, include=FALSE}
+```{r setup, include=FALSE,error=T}
 knitr::opts_chunk$set(echo = TRUE)
 #paralle
 library(BiocParallel)
@@ -105,7 +115,7 @@ register(MulticoreParam(ncpus))
 ```
 # Set up system and parameters
 ```{r,message=FALSE,warning=FALSE}
-load("ping12.Rdata")
+load(data)
 source('Resources/general_functions.R')
 source('Resources/extractor_functions.R') 
 source('Resources/ping_copy.R') 
@@ -115,17 +125,18 @@ source('Resources/alleleCombine_functions.R')
 
 threads <- ncpus
 setDTthreads(threads)
+
 ```
 
 # Set copy number thresholds
-```{r,message=FALSE,warning=FALSE}
+```{r,message=TRUE,warning=TRUE}
 sampleList <- ping_copy.manual_threshold(sampleList=sampleList,resultsDirectory=outDir$path,use.threshFile = T) # this function sets copy thresholds
 sampleList <- ping_copy.load_copy_results(sampleList, outDir$path)
 
 ```
 
 # PING2 alignments and allele calling
-```{r,message=FALSE,warning=FALSE}
+```{r,message=TRUE,warning=TRUE}
 if(allele.fullAlign){
   as.list <- alleleSeq.list
 }else{
@@ -137,6 +148,10 @@ gcResourceDirectory <- normalizePath('Resources/gc_resources', mustWork = T)
 cat('\n\nReading in the KFF probelist file: ', file.path(gcResourceDirectory, probelistFile))
 probeDF <- read.csv(file.path(gcResourceDirectory, probelistFile), stringsAsFactors = F, check.names = F)
 row.names(probeDF) <- probeDF$Name
+
+# Filter out low read count sample
+filter <- yaml.load(filter)
+sampleList <- sampleList[ !names(sampleList) %in% filter ]
 
 # Alignment and allele calling workflow
 sampleList <- ping_allele(sampleList)

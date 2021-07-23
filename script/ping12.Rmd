@@ -141,7 +141,7 @@ copy.fullAlign <- F
 ```
 
 # Run PING2 extractor
-```{r,message=FALSE,warning=FALSE}
+```{r,message=TRUE,warning=TRUE}
 sampleList <- general.paired_sample_objects(rawFastqDirectory, fastqPattern, outDir$path, shortNameDelim)
 extractedFastqDirectory <- file.path(resultsDirectory,'extractedFastq') 
 outDir.extFqDir <-pathObj(name='extractedFqDir',path=extractedFastqDirectory)
@@ -150,7 +150,7 @@ sampleList <- extractor.run(sampleList,threads,outDir.extFqDir$path,forceRun=F) 
 ```
 
 # Run PING2 gene content and copy number (gc_caller)
-```{r,message=FALSE,warning=FALSE}
+```{r,message=TRUE,warning=TRUE}
 source('Resources/genotype_alignment_functions.R')
 source('Resources/alleleSetup_functions.R')
 sampleList <- ping_copy.graph(sampleList=sampleList,threads=threads,resultsDirectory=outDir$path,forceRun=F,onlyKFF=F,fullAlign = F) 
