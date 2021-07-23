@@ -1,20 +1,20 @@
 __default__:
     cpus: 2
-    mem: 24g
+    mem: 8g
     partition: quick,norm
     time: '4:00:00'
     scratch: lscratch:1
 
 ping_12:
-    cpus: 16
-    mem: 120g
+    cpus: 32
+    mem: 64g
     partition: norm
     time: '100:00:00'
     scratch: lscratch:1000
 
 ping_3:
-    cpus: 16
-    mem: 120g
+    cpus: 50
+    mem: 64g
     partition: norm
-    time: '100:00:00'
+    time: '200:00:00'
     scratch: lscratch:1000
