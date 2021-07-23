@@ -14,5 +14,8 @@ shortNameDelim: "_"
 # need to fill the file: "output_directory/manualCopyThresholds.csv" 
 step3: "no"
 
-
+### Filter out low reads-count samples in step3 to avoid sample failure
+## leave it null unless you received an error message: "Error in general.count_sam_header(samPath) : This sam file does not exist" when running step3
+## example: "- {sampleID_1}\n- {sampleID_2}\n- {sampleID_3}\n"
+filter: ""
 
