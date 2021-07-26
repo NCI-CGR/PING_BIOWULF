@@ -22,9 +22,17 @@ Basic parameters:
 * shortNameDelim: Sample ID delimiter to shorten sample ID (ID will be characters before delim, ID's must be unique or else there will be an error)
 
 Optional parameters:
-* step3: "yes" or "no"(default); to run the copy number thresholding functionality and the following allele calling; require filling the file generated from the previous step "{output_directory}/manualCopyThresholds.csv" before initiating this step; see (V. PING copy number thresholds determination) for how to determine the threshold values.
-* filter: "" (default null); to filter out low reads-count samples in step3 to avoid sample failure; ONLY needed when receiveing error message : "Error in general.count_sam_header(samPath) : This sam file does not exist" when running step3; usually samples with reads count below 100 for 3DL3 as shown in the file "{output_directory}/locusCountFrame.csv" are considered as "low"; input format: "- {sampleID_1}\n- {sampleID_2}\n- {sampleID_3}\n".
-
+* step3: "yes" or "no"(default); to run the copy number thresholding functionality and the following allele calling. 
+  
+  Require filling the file generated from the previous step "{output_directory}/manualCopyThresholds.csv" before initiating this step. 
+  
+  See (V. PING copy number thresholds determination) for how to determine the threshold values.
+* filter: "" (default null); to filter out low reads-count samples in step3 to avoid sample failure; input format: "- {sampleID_1}\n- {sampleID_2}\n- {sampleID_3}\n".
+  
+  ONLY needed when receiveing error message : "Error in general.count_sam_header(samPath) : This sam file does not exist" when running step3.
+  
+  Usually samples with reads count below 100 for 3DL3 as shown in the file "{output_directory}/locusCountFrame.csv" are considered as "low".
+  
 ### III. To run
 * Clone the repository to your working directory
 ```bash
@@ -137,7 +145,13 @@ output
 ```
 
 ### V. PING copy number thresholds determination
-Open the example thresholds file provided by the PING "PING/Resources/gc_resources/manualCopyThresholds_example.csv" as a reference. Check copy number graphs in the directory "{output_directory}/copyPlots/" one by one. For each plot, use the relevant example threshold vaules as the default copy number cutoff points (y axis) for that gene. Check if all sample clusters well fit into the copy number regions separated by the default thresholds. If yes, record the threshold value to the relevant copy number region in the table "{output_directory}/manualCopyThresholds.csv"; if not, adjust the threshold value and then record it. Use the median value of copy number 1 cluster shown on the left side histogram plot as a guide to help with the threshold determination. Leave NAs to regions not shown in the graph.
+Open the example thresholds file provided by the PING "PING/Resources/gc_resources/manualCopyThresholds_example.csv" as a reference. 
+
+Check copy number graphs in the directory "{output_directory}/copyPlots/" one by one. For each plot, use the relevant example threshold vaules as the default copy number cutoff points (y axis) for that gene. 
+
+Check if all sample clusters well fit into the copy number regions separated by the default thresholds. If yes, record the threshold value to the relevant copy number region in the table "{output_directory}/manualCopyThresholds.csv"; if not, adjust the threshold value and then record it. Use the median value of copy number 1 cluster shown on the left side histogram plot as a guide to help with the threshold determination. 
+
+Leave NAs to regions not shown in the graph.
 
 #### Reference
 Norman et al., Defining KIR and HLA Class I Genotypes at Highest Resolution via High-Throughput Sequencing, The American Journal of Human Genetics (2016), http://dx.doi.org/10.1016/j.ajhg.2016.06.023
