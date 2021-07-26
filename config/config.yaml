@@ -1,17 +1,17 @@
 ### Required to run the whole workflow
 # PING source code directory:
-ping: "/data/DCEG_HPV/PING/PING/Resources"
+ping: "{path_to_ping_directory}/Resources"
 # fastq file directory:
-raw: "/data/DCEG_HPV/PING/Pat_KIR"
+raw: "{path_to_fastq_directory}"
 # fastq file pattern:
 fastq_pat: "fastq"
 # output directory:
-out_dir: "/data/DCEG_HPV/PING/output"
+out_dir: "{path_to_output_directory}"
 # sample ID delimiter to shorten sample ID (ID will be characters before delim, ID's must be unique or else there will be an error)
 shortNameDelim: "_"
 
 ### Ready to run step3 (set the copy number thresholds and run PING2 alignments and allele calling)?
-# need to fill the file: "output_directory/manualCopyThresholds.csv" 
+# need to fill the file: "{output_directory}/manualCopyThresholds.csv" 
 step3: "no"
 
 ### Filter out low reads-count samples in step3 to avoid sample failure
