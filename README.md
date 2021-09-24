@@ -8,15 +8,6 @@ Major steps in the workflow include:
 1) Run PING extractor and gc caller
 2) Run PING copy number thresholding and allele caller
 
-## Software Requirements
-* [PING](https://github.com/wesleymarin/PING)
-
-Clone the original PING repository to your desired directory. 
-```bash
-cd {your_desired_directory}
-git clone https://github.com/wesleymarin/PING.git
-```
-
 ## User's guide
 ### I. Input requirements
 * Edited config/config.yaml
@@ -48,7 +39,7 @@ Optional parameters:
 cd {your_working_directory}
 git clone https://github.com/NCI-CGR/PING_BIOWULF.git
 ```
-* Downlaod the PING pipeline to your desired directory
+* Downlaod the original PING pipeline to your desired directory
 ```bash
 cd {your_desired_directory}
 git clone https://github.com/wesleymarin/PING.git
