@@ -8,6 +8,14 @@ Major steps in the workflow include:
 1) Run PING extractor and gc caller
 2) Run PING copy number thresholding and allele caller
 
+## Software Requirements
+* [PING](https://github.com/wesleymarin/PING)
+Clone original PING repository to your desired directory. 
+```bash
+cd {your_desired_directory}
+git clone https://github.com/wesleymarin/PING.git
+```
+
 ## User's guide
 ### I. Input requirements
 * Edited config/config.yaml
