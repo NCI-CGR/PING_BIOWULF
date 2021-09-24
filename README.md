@@ -11,7 +11,7 @@ Major steps in the workflow include:
 ## Software Requirements
 * [PING](https://github.com/wesleymarin/PING)
 
-Clone original PING repository to your desired directory. 
+Clone the original PING repository to your desired directory. 
 ```bash
 cd {your_desired_directory}
 git clone https://github.com/wesleymarin/PING.git
